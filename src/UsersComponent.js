@@ -13,33 +13,27 @@ function UsersComponent() {
         })
     }, [])
 
-    // I thought the assignment wanted us to use useState
-    // for the toggle between showing and hinding user details.
-    // But that would only toggle between a global variable,
-    // not one unique to each user.
 
-    // I did this anyway, for the sake of having something to 
-    // turn in.
-    
-    const [isHidden, handleIsHidden] = useState(true)
-
-    const handleClick = () => {
-        let newHidden = !isHidden 
-        handleIsHidden(newHidden);
-      }
-
-    // Then I thought about giving each user an isHidden variable 
-    // upon fetching, and having a function to update that variable.
-    // But the users array lives in state, and you can't update state directly.
-    // And since useState updates the whole variable, not just an index
-    // of an array or a entry in an object, I wasn't sure how to make
-    // that work.
+    const handleClick = (index) => {
+        // We cannot update state directly, so we need to create 
+        // a new value for arrayOfUsers and pass it into setArrayOfUsers
+        // We first make a copy by spreading the original array
+       let stateCopy = [...arrayOfUsers]
+       // Then we use the supplied index to access the isHidden property
+       // for a specific user.
+       if (stateCopy[index].isHidden === false) {
+        stateCopy[index].isHidden = true
+       } else stateCopy[index].isHidden = false
+       // We can edit the copy directly, and then use the copy as the 
+       // new value to pass into setArrayOfUsers
+       setArrayOfUsers(stateCopy);
+     }
+     
 
 
     return (
         <div>
             <ul>
-                {console.log(arrayOfUsers)}
                 {arrayOfUsers.map((user, index) => {
                     return (
                         <li key={index} style={{display: 'flex'}}>
@@ -47,11 +41,11 @@ function UsersComponent() {
                                 <img src={user.picture.thumbnail} alt={`${user.name.first} ${user.name.last}`} style={{width: "50px", height: "50px"}}></img>
                                 {`${user.name.first} ${user.name.last}`}
                             </h2>
-                            <button onClick={handleClick}>{isHidden ? "Show Details" : "Hide Details"}</button>
-                            <h3 style={{display: isHidden ? "none" : "block"}}>
-                                <h4>Phone: {user.phone}</h4>
-                                <h4>Cell: {user.cell}</h4>
-                                <h4>email: {user.email}</h4>
+                            <button onClick={() => handleClick(index)}>{user.isHidden ? "Show Details" : "Hide Details"}</button>
+                            <h3 style={{display: user.isHidden ? "none" : "block"}}>
+                                <p>Phone: {user.phone}</p>
+                                <p>Cell: {user.cell}</p>
+                                <p>email: {user.email}</p>
                             </h3>
                         </li>
                     )}
